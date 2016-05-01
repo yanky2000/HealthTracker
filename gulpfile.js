@@ -13,6 +13,8 @@ var cached = require('cached'); // Returns only files with differed content(&nam
 var remember = require('remember'); /* Returns cached files content not presented in input argument */
 var path = require('path');
 var browserSync = require('browser-sync').create();
+var notify = require('gulp-notify');
+
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development'; // to insert sourcemap only to development version. exclude in production
 
@@ -33,7 +35,16 @@ gulp.task('styles', function () {
         // .pipe(remember('styles')) 
         .pipe(gulpIf(isDevelopment, sourcemaps.init()))
         // .pipe(debug({title: 'source-map'}))
-        .pipe(sass({ indentedSyntax: true }).on('error', sass.logError))
+        .pipe(sass({ indentedSyntax: true })
+        // .on('error', sass.logError)) // native sass error handler
+        .pipe(sass({ indentedSyntax: true }))
+        .on('error', notify.onError(function (err) {
+            return {
+                title: "Sass error caught!",
+                message: err.message
+            }
+        })
+        )
         .pipe(autoprefixer())
         // Don't use concat, because concat sass files beforehand with @import
         // .pipe(concat('all.css'))
@@ -46,12 +57,19 @@ gulp.task('styles', function () {
 /* Apply to separate css files */
 // Should process only new&modified files, delete removed files, concat many files in one.
 gulp.task('stylesConcat', function () {
-    return gulp.src('dev/**/*.*')
+    return gulp.src('dev/**/*.sass')
         .pipe(cached('stylesConcat')) // instead of adding {since: gulp.lastRun('stylesConcat')} to gulp.src, to prevent ctrl-z bug of deleted files.
         .pipe(remember('stylesConcat'))
-        .pipe(concat('all.css'))
+        .pipe(sass({ indentedSyntax: true }))
+        .on('error', notify.onError(function (err) {
+            return {
+                title: "Sass",
+                message: err.message
+            }
+        }))
+        .pipe(concat('main.css'))
         .pipe(autoprefixer())
-        .pipe(gulp.dest('dist/assets'))
+        .pipe(gulp.dest('dist'))
 })
 
 
@@ -68,12 +86,12 @@ gulp.task('styles:watchDeleted', function () {
         /* make 'remember' and 'cache' remove files, that have been deleted  from dev folder. As a result, if we delete some sass/css files from dev their content won't added to output files from Modules cache */
         remember.forget('stylesConcat', path.resolve(filepath));
         delete cached.caches.stylesConcat[path.resolve(filepath)];
-    })   
- });
+    })
+});
 
 
 /* Clean up dist directory */
-gulp.task('clean', function (tylesii) {
+gulp.task('clean', function () {
     return del('dist');
 });
 
