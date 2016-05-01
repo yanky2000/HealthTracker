@@ -127,7 +127,7 @@ gulp.task('build', gulp.series(
 
 /* Watch for changes in styles and assets */
 gulp.task('watch', function () {
-    gulp.watch('dev/styles/**/*.sass', ['styles']);//gulp.series('styles', ...)
+    gulp.watch('dev/assets/sass/**/*.sass', gulp.series('styles'));//gulp.series('styles', ...)
     gulp.watch('dev/assets/**/*.*', gulp.series('assets'));
 });
 

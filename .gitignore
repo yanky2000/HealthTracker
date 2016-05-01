@@ -33,6 +33,10 @@ build/Release
 node_modules
 jspm_packages
 
+# Bower components
+bower_components
+
+
 # Optional npm cache directory
 .npm
 
