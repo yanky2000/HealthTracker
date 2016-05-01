@@ -1,0 +1,18 @@
+body {
+  font-size: 26px;
+  font-family: 'Open Sans'; }
+
+h1 {
+  font-size: 48px;
+  background-color: yellow;
+  color: blue; }
+
+.test {
+  border-radius: 60px;
+  background-color: pink;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex; }
+
+/*# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImFib3V0LnNhc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDQyxnQkFBZ0I7RUFDaEIseUJBQXlCLEVBQUc7O0FBRTdCO0VBQ0MsZ0JBQWdCO0VBQ2hCLHlCQUF5QjtFQUN6QixZQUFZLEVBQUc7O0FBRWhCO0VBQ0Msb0JBQW9CO0VBQ3BCLHVCQUF1QjtFQUV2QixxQkFBYztFQUFkLHNCQUFjO0VBQWQscUJBQWM7RUFBZCxjQUFjLEVBQUciLCJmaWxlIjoiYWJvdXQuY3NzIiwic291cmNlc0NvbnRlbnQiOlsiYm9keSB7XG5cdGZvbnQtc2l6ZTogMjZweDtcblx0Zm9udC1mYW1pbHk6ICdPcGVuIFNhbnMnOyB9XG5cbmgxIHtcblx0Zm9udC1zaXplOiA0OHB4O1xuXHRiYWNrZ3JvdW5kLWNvbG9yOiB5ZWxsb3c7XG5cdGNvbG9yOiBibHVlOyB9XG5cbi50ZXN0IHtcblx0Ym9yZGVyLXJhZGl1czogNjBweDtcblx0YmFja2dyb3VuZC1jb2xvcjogcGluaztcblx0Ly8gY29sb3I6IHJlZFxuXHRkaXNwbGF5OiBmbGV4OyB9XG5cbiJdfQ== */
