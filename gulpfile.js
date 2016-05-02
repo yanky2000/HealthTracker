@@ -7,13 +7,16 @@ var debug = require('gulp-debug');
 var gulpIf = require('gulp-if');
 var newer = require('gulp-newer'); // process only new&modified files
 var del = require('del');
-var prefixer = require('autoprefixer');
+// var prefixer = require('autoprefixer');
 var autoprefixer = require('gulp-autoprefixer');
 var cached = require('cached'); // Returns only files with differed content(&names?) to it's cached ones. Usually use since:
-var remember = require('remember'); /* Returns cached files content not presented in input argument */
+var remember = require('gulp-remember'); /* Returns cached files content not presented in input argument */
 var path = require('path');
 var browserSync = require('browser-sync').create();
 var notify = require('gulp-notify');
+var combiner = require('stream-combiner2').obj;
+var newer = require('gulp-newer');
+// var multipipe = require('multipipe');
 
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development'; // to insert sourcemap only to development version. exclude in production
@@ -29,14 +32,12 @@ var anyPath = '/**/*.*';
 
 /* Apply to one sass file containing all premade @imports  */
 gulp.task('styles', function () {
-    return gulp.src('dev/assets/sass/**/*.sass')
+    return gulp.src('dev/assets/sass/**/*.sass', { since: gulp.lastRun('styles') })
         // .pipe(debug({title: 'src'}))
         /* apply if using concat for several files. Allows to process only new&modified files to concatenated file, adding unmodifed files to output file from its cache*/
-        // .pipe(remember('styles')) 
+        // .pipe(remember('styles')) //if using concat
         .pipe(gulpIf(isDevelopment, sourcemaps.init()))
         // .pipe(debug({title: 'source-map'}))
-        .pipe(sass({ indentedSyntax: true })
-        // .on('error', sass.logError)) // native sass error handler
         .pipe(sass({ indentedSyntax: true }))
         .on('error', notify.onError(function (err) {
             return {
@@ -50,9 +51,26 @@ gulp.task('styles', function () {
         // .pipe(concat('all.css'))
         // .pipe(debug({title: 'sass'}))
         .pipe(gulpIf(isDevelopment, sourcemaps.write())) // If sourcemap.write{'.'} sourcefile will be created in separate file
-        .pipe(gulp.dest('dist/assets/css'));
+        .pipe(gulp.dest('dist/assets/css'))
     // .pipe(debug({title: 'dest'}))
 });
+
+/* With error handling for all pipes */
+gulp.task('styles5', function () {
+    return combiner(
+        gulp.src('dev/assets/sass/**/*.sass', { since: gulp.lastRun('styles5') }),
+        // remember('styles5'),
+        newer('dist/assets/css'),
+        gulpIf(isDevelopment, sourcemaps.init()),
+        sass({ indentedSyntax: true }),
+        autoprefixer(),
+        gulpIf(isDevelopment, sourcemaps.write()),
+        gulp.dest('dist/assets/css')
+    ).on('error', notify.onError());
+
+    
+});
+
 
 /* Apply to separate css files */
 // Should process only new&modified files, delete removed files, concat many files in one.
@@ -90,7 +108,7 @@ gulp.task('styles:watchDeleted', function () {
 });
 
 
-/* Clean up dist directory */
+/* kn up dist directory */
 gulp.task('clean', function () {
     return del('dist');
 });
