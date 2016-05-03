@@ -17,7 +17,9 @@ var notify = require('gulp-notify');
 var combiner = require('stream-combiner2').obj;
 var newer = require('gulp-newer');
 // var multipipe = require('multipipe');
-
+var jade = require('gulp-jade');
+// var rename = require('gulp-rename');
+// var rev = require('gulp-rev'); // for long-term caching
 
 var isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV == 'development'; // to insert sourcemap only to development version. exclude in production
 
@@ -68,7 +70,7 @@ gulp.task('styles5', function () {
         gulp.dest('dist/assets/css')
     ).on('error', notify.onError());
 
-    
+
 });
 
 
@@ -90,8 +92,16 @@ gulp.task('stylesConcat', function () {
         .pipe(gulp.dest('dist'))
 })
 
+/* ========== JADE ==============*/
+gulp.task('jade', function () {
+    var YOUR_LOCALS = {};
 
-
+    return gulp.src('dev/**/*.jade')
+        .pipe(jade({
+            locals: YOUR_LOCALS
+        }))
+        .pipe(gulp.dest('dist'))
+});
 
 /* ========= WATCHERS ==========*/
 gulp.task('sass:watch', function () {
@@ -130,7 +140,7 @@ gulp.task('assets', function () {
 /* Makes first build of dist */
 gulp.task('build', gulp.series(
     'clean',
-    gulp.parallel('assets', 'styles')
+    gulp.parallel('assets', 'jade', 'styles')
 ));
 
 
@@ -138,6 +148,7 @@ gulp.task('build', gulp.series(
 gulp.task('watch', function () {
     gulp.watch('dev/assets/sass/**/*.sass', gulp.series('styles'));
     gulp.watch('dev/**/*.*', gulp.series('assets'));
+    gulp.watch('dev/**/*.jade', gulp.series('jade'));
 });
 
 /* ========== Browser Sync ==========*/
